@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Prediction</title>
+    
+    <!-- Include Firebase SDK -->
+    <script type="module">
+        // Firebase Modular SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq_bfLLV4UuTXDithT1DoX5ObF4c52ZcU",
+            authDomain: "disaster-management-1dc60.firebaseapp.com",
+            databaseURL: "https://disaster-management-1dc60-default-rtdb.firebaseio.com",
+            projectId: "disaster-management-1dc60",
+            storageBucket: "disaster-management-1dc60.firebasestorage.app",
+            messagingSenderId: "855563545502",
+            appId: "1:855563545502:web:cd42c4f7f2f27c3f06848f",
+            measurementId: "G-N68DSNKYL7"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Function to check for flood or landslide prediction
+        function predictDisaster(data) {
+            const { temperature, humidity, soilMoisture, vibrationDetected } = data;
+            
+            let predictions = [];
+
+            console.log('Fetched Data:', data);  // Debugging
+
+            // Logic for flood prediction
+            if (soilMoisture < 450 || temperature < 20) {
+                predictions.push("Flood likely to occur.");
+            }
+
+            // Logic for landslide prediction
+            if (vibrationDetected === true||false || humidity > 80) {
+                predictions.push("Landslide likely to occur.");
+            }
+
+            // If no disaster prediction
+            if (predictions.length === 0) {
+                predictions.push("Conditions are safe.");
+            }
+
+            console.log('Predictions:', predictions);  // Debugging
+
+            return predictions;
+        }
+
+        // Fetch data and listen for updates from Firebase
+        function listenForDataUpdates() {
+            const dataRef = ref(database); // Replace with your data node path
+
+            onValue(dataRef, (snapshot) => {
+                const data = snapshot.val();
+                
+                const resultDiv = document.getElementById("prediction");
+                resultDiv.innerHTML = ""; // Clear previous data
+
+                if (data) {
+                    const predictions = predictDisaster(data);
+
+                    // Add a class based on the nature of predictions
+                    if (predictions.some(pred => pred.includes("likely"))) {
+                        resultDiv.className = "result danger";
+                    } else {
+                        resultDiv.className = "result safe";
+                    }
+
+                    // Display each prediction
+                    predictions.forEach(prediction => {
+                        const p = document.createElement("p");
+                        p.innerHTML = prediction;
+                        resultDiv.appendChild(p);
+                    });
+
+                } else {
+                    resultDiv.className = "error";
+                    resultDiv.innerHTML = "Error: No data available!";
+                }
+            }, (error) => {
+                console.error("Error fetching data from Firebase:", error);
+                const resultDiv = document.getElementById("prediction");
+                resultDiv.className = "error";
+                resultDiv.innerHTML = "Error: Unable to fetch data.";
+            });
+        }
+
+        // Call function to listen for data updates on page load
+        window.onload = function() {
+            listenForDataUpdates();
+        };
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result {
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .safe {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Disaster Prediction Based on Real-Time Data</h2>
+
+        <div id="prediction" class="loading">Loading data...</div>
+
+    </div>
+
+</body>
+</html>

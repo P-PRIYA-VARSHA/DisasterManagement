@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Prediction Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f0fe;
+        }
+        header {
+            background-color: #004aad;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+            padding: 20px;
+        }
+        .chart-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        button {
+            background-color: #004aad;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        button:hover {
+            background-color: #003080;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Disaster Prediction Dashboard</h1>
+        <p>Real-time analysis and prediction of landslides and floods</p>
+    </header>
+    <main>
+        <div class="container">
+            <div class="card">
+                <h3>Temperature</h3>
+                <p id="temperature">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Humidity</h3>
+                <p id="humidity">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Soil Moisture</h3>
+                <p id="soil-moisture">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Vibration</h3>
+                <p id="vibration">Loading...</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="predictionChart"></canvas>
+        </div>
+        <button id="predictBtn">
+            <a href="prediction.html" style="color: white; text-decoration: none;">Predict Disaster</a>
+        </button>
+    </main>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-database.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq_bfLLV4UuTXDithT1DoX5ObF4c52ZcU",
+            authDomain: "disaster-management-1dc60.firebaseapp.com",
+            databaseURL: "https://disaster-management-1dc60-default-rtdb.firebaseio.com",
+            projectId: "disaster-management-1dc60",
+            storageBucket: "disaster-management-1dc60.appspot.com",
+            messagingSenderId: "855563545502",
+            appId: "1:855563545502:web:cd42c4f7f2f27c3f06848f",
+            measurementId: "G-N68DSNKYL7"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Fetch data dynamically
+        const tempRef = ref(db, 'temperature');
+        const humidityRef = ref(db, 'humidity');
+        const soilMoistureRef = ref(db, 'soilMoisture');
+        const vibrationRef = ref(db, 'vibrationDetected');
+
+        onValue(tempRef, (snapshot) => {
+            const temperature = snapshot.val();
+            document.getElementById('temperature').innerText = `${temperature} °C`;
+        });
+
+        onValue(humidityRef, (snapshot) => {
+            const humidity = snapshot.val();
+            document.getElementById('humidity').innerText = `${humidity} %`;
+        });
+
+        onValue(soilMoistureRef, (snapshot) => {
+            const soilMoisture = snapshot.val();
+            document.getElementById('soil-moisture').innerText = `${soilMoisture}`;
+        });
+
+        onValue(vibrationRef, (snapshot) => {
+            const vibration = snapshot.val() ? "Yes" : "No";
+            document.getElementById('vibration').innerText = vibration;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

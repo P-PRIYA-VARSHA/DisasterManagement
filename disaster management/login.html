@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Disaster Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('C://Users//P. PRIYA VARSHA//Downloads//disaster management//2nd image front.avif');
+            background-size: cover;
+            background-position: center;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 30px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p style="text-align: center;">Don't have an account? <a href="signup.html">Sign Up</a></p>
+    </div>
+
+    <!-- Firebase SDK (as a module) -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+  apiKey: "AIzaSyCq_bfLLV4UuTXDithT1DoX5ObF4c52ZcU",
+  authDomain: "disaster-management-1dc60.firebaseapp.com",
+  databaseURL: "https://disaster-management-1dc60-default-rtdb.firebaseio.com",
+  projectId: "disaster-management-1dc60",
+  storageBucket: "disaster-management-1dc60.firebasestorage.app",
+  messagingSenderId: "855563545502",
+  appId: "1:855563545502:web:cd42c4f7f2f27c3f06848f",
+  measurementId: "G-N68DSNKYL7"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Handle form submission
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get email and password from input fields
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // Firebase login
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // User logged in successfully
+                    alert("Login successful!");
+                    // Redirect to dashboard or home page
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    // Handle errors
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(`Error: ${errorMessage}`);
+                });
+        });
+    </script>
+</body>
+</html>
